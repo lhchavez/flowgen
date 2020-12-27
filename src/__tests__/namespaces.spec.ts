@@ -42,7 +42,6 @@ namespace test {
 
   test("class", () => {
     const ts = `
-// TODO: implement class merging
 declare class Album {
   label: Album.AlbumLabel;
 }
@@ -161,6 +160,87 @@ declare namespace E0 {
 `;
   const result = compiler.compileDefinitionString(ts, { quiet: true });
   expect(beautify(result)).toMatchSnapshot();
+});
+
+describe("should handle nested namespace merging", () => {
+  describe("function", () => {
+    test("interface", () => {
+      const ts = `
+namespace ns {
+  declare function test(foo: number): string;
+  namespace test {
+    export interface Foo {
+      bar: number
+    }
+  }
+}
+`;
+      const result = compiler.compileDefinitionString(ts);
+      expect(beautify(result)).toMatchSnapshot();
+    });
+
+    test("type", () => {
+      const ts = `
+namespace ns {
+  declare function test(foo: number): string;
+  namespace test {
+    export type Foo = {
+      bar: number
+    }
+  }
+}
+`;
+      const result = compiler.compileDefinitionString(ts);
+      expect(beautify(result)).toMatchSnapshot();
+    });
+
+    test("const", () => {
+      const ts = `
+namespace ns {
+  declare function test(foo: number): string;
+  namespace test {
+    export const ok: number
+  }
+}
+`;
+      const result = compiler.compileDefinitionString(ts);
+      expect(beautify(result)).toMatchSnapshot();
+    });
+  });
+
+  test("class", () => {
+    const ts = `
+namespace ns {
+  // TODO: implement class merging inside namespaces
+  declare class Album {
+    label: Album.AlbumLabel;
+  }
+  namespace Album {
+    export declare class AlbumLabel { }
+  }
+}
+`;
+    const result = compiler.compileDefinitionString(ts);
+    expect(beautify(result)).toMatchSnapshot();
+  });
+
+  test("enum", () => {
+    const ts = `
+namespace ns {
+  // TODO: implement enum merging inside namespaces
+  enum Color {
+    red = 1,
+    green = 2,
+    blue = 4
+  }
+  namespace Color {
+    export declare function mixColor(colorName: string): number;
+  }
+}
+`;
+    const result = compiler.compileDefinitionString(ts);
+    expect(beautify(result)).toMatchSnapshot();
+  });
 });
 
 test("should handle qualified namespaces", () => {
