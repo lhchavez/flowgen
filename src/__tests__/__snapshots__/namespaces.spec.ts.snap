@@ -121,7 +121,7 @@ declare var npm$namespace$ns: {|
   Album: typeof ns$Album,
 |};
 declare class ns$Album {
-  label: Album$AlbumLabel;
+  label: ns$Album.AlbumLabel;
   static AlbumLabel: typeof ns$Album$AlbumLabel;
 }
 
